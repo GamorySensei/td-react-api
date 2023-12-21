@@ -2,10 +2,11 @@ import React from 'react'
 
 function Employee({data}) {
   return (
-    <div>
-        <img src={ data.image } alt=""/>
-        <h5>{ data.firstName } { data.lastName }</h5>
-    </div>
+    <tr>
+        <td width="70px"><img src={ data.image } alt="" style={ {height: '50px'}}/></td>
+        <td>{ data.firstName }</td>
+        <td>{ data.lastName }</td>
+    </tr>
   )
 }
 
