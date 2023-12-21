@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Employee from "./Employee";
-import NewEmployeeForm from "./NewEmployeeForm";
+import EmployeeForm from "./EmployeeForm";
+import employeeFormData from "./EmployeeFormData";
 
 function EmployeeList() {
 	// On crée une variable d'état pour stocker la liste des employés pour pouvoir agir dynamiquement dessus
 	const [employees, setEmployees] = useState([]);
 	const [pagesCount, setPagesCount] = useState();
 	const [pageLimit, setPageLimit] = useState(5);
+    const [editEmployee, setEditEmployee] = useState(employeeFormData);
 
 	// On recupère la liste des employés via l'API au "montage" du composant
 	useEffect(() => {
@@ -30,10 +32,28 @@ function EmployeeList() {
 			});
 	};
 
-    const addEmployee = (employee) => {
+    const addOrUpdateEmployee = (employee) => {
         let newEmployeesList = [...employees];
-        newEmployeesList.unshift(employee);
+
+        // On vérifie si l'emplyoyé existe
+        let existingEmployee = newEmployeesList.find(e => e.id === employee.id);
+
+        if(existingEmployee)
+        {
+            // On update l'employé dans la liste
+            newEmployeesList = newEmployeesList.map((emp) =>
+                emp === existingEmployee ? employee : emp
+            );
+            setEditEmployee(employeeFormData);
+        }
+        else
+        {
+            // On ajoute
+            newEmployeesList.unshift(employee);
+        }
+
         setEmployees(newEmployeesList);
+
     }
 
 	const renderPagination = () => {
@@ -54,7 +74,7 @@ function EmployeeList() {
 			}
 			return (
 				<tr>
-					<td colSpan={3}>
+					<td colSpan={4}>
 						<nav aria-label="Page navigation example">
 							<ul className="pagination">{pagination}</ul>
 						</nav>
@@ -70,16 +90,23 @@ function EmployeeList() {
 		setPageLimit(value);
 	};
 
+    const handleEditEmployee = (id) => {
+        let employee = employees.find(employee => employee.id === id);
+        if(employee) {
+            setEditEmployee(employee)
+        }
+    }
+
 	const renderPageLimitSelector = () => {
 		let options = [5, 10, 20, 30, 50, 100];
 		return (
 			<tr>
-				<td colSpan={3}>
+				<td colSpan={4}>
 					<select
 						onChange={(e) => handlePageLimitChange(e.target.value)}
 					>
 						{options.map((limit) => (
-							<option value={limit}>{limit}</option>
+							<option value={limit} key={limit}>{limit}</option>
 						))}
 					</select>
 				</td>
@@ -89,7 +116,7 @@ function EmployeeList() {
 
 	const renderEmployees = () => {
 		return employees.map((employee) => (
-			<Employee key={employee.id} data={employee} />
+			<Employee key={employee.id} data={employee} handleEdit={ (id) => handleEditEmployee(id) }/>
 		));
 	};
 
@@ -106,6 +133,7 @@ function EmployeeList() {
 									<th></th>
 									<th>Nom</th>
 									<th>Prénom</th>
+                                    <th></th>
 								</tr>
 							</thead>
 
@@ -115,7 +143,7 @@ function EmployeeList() {
 						</table>
 					</div>
                     <div className="col-12 col-md-4">
-                        <NewEmployeeForm onSubmit={ addEmployee }/>
+                        <EmployeeForm onSubmit={ addOrUpdateEmployee } data={ editEmployee }/>
                     </div>
 				</div>
 			</div>
