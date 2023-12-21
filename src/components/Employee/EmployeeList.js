@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Employee from "./Employee";
+import NewEmployeeForm from "./NewEmployeeForm";
 
 function EmployeeList() {
 	// On crée une variable d'état pour stocker la liste des employés pour pouvoir agir dynamiquement dessus
@@ -29,6 +30,12 @@ function EmployeeList() {
 			});
 	};
 
+    const addEmployee = (employee) => {
+        let newEmployeesList = [...employees];
+        newEmployeesList.unshift(employee);
+        setEmployees(newEmployeesList);
+    }
+
 	const renderPagination = () => {
 		const pagination = [];
 		if (pagesCount > 1) {
@@ -38,7 +45,7 @@ function EmployeeList() {
 						<a
 							className="page-link"
 							onClick={(e) => handlePageChange(i)}
-                            href="#"
+							href="#"
 						>
 							{i}
 						</a>
@@ -49,7 +56,7 @@ function EmployeeList() {
 				<tr>
 					<td colSpan={3}>
 						<nav aria-label="Page navigation example">
-							<ul class="pagination">{pagination}</ul>
+							<ul className="pagination">{pagination}</ul>
 						</nav>
 					</td>
 				</tr>
@@ -89,20 +96,28 @@ function EmployeeList() {
 	return (
 		<>
 			<div className="container py-5">
-				<table className="table table-striped table-bordered">
-					<thead>
-						{renderPageLimitSelector()}
-						<tr>
-							<th></th>
-							<th>Nom</th>
-							<th>Prénom</th>
-						</tr>
-					</thead>
+                <h1 className="mb-4">Gestion des utilisateurs</h1>
+				<div className="row">
+					<div className="col-12 col-md-8">
+						<table className="table table-striped table-bordered">
+							<thead>
+								{renderPageLimitSelector()}
+								<tr>
+									<th></th>
+									<th>Nom</th>
+									<th>Prénom</th>
+								</tr>
+							</thead>
 
-					<tbody>{renderEmployees()}</tbody>
+							<tbody>{renderEmployees()}</tbody>
 
-					<tfoot>{renderPagination()}</tfoot>
-				</table>
+							<tfoot>{renderPagination()}</tfoot>
+						</table>
+					</div>
+                    <div className="col-12 col-md-4">
+                        <NewEmployeeForm onSubmit={ addEmployee }/>
+                    </div>
+				</div>
 			</div>
 		</>
 	);
