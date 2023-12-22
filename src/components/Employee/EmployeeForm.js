@@ -20,7 +20,7 @@ export default function EmployeeForm({ onSubmit, data }) {
 			fetch("https://dummyjson.com/users/" + employee.id, {
 				method: "PUT" /* or PATCH */,
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(employee),
+				body: JSON.stringify({employee}),
 			})
 				.then((res) => res.json())
 				.then(data => {
